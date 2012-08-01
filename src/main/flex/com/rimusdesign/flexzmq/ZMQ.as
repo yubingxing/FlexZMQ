@@ -11,7 +11,7 @@ package com.rimusdesign.flexzmq{
 	import com.rimusdesign.flexzmq.core.policy.PolicyContext;
 	import com.rimusdesign.flexzmq.core.policy.RequestPolicy;
 	import com.rimusdesign.flexzmq.core.policy.SubscribePolicy;
-
+	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
@@ -170,6 +170,8 @@ package com.rimusdesign.flexzmq{
 		private var handshakeComplete	: Boolean;
 		private var options				: Vector.<Option>;
 		private var connectEvent		: Event;
+		private var _host				: String;
+		private var _port				: uint;
 		
 
 		public function ZMQ ( socketType : String ) {
@@ -182,7 +184,6 @@ package com.rimusdesign.flexzmq{
 			policyContext.activatePolicy ( socketType );
 		}
 		
-		
 //		private function monitorSocket ( ) : void {
 //			
 //			socketMonitor.addEventListener ( StatusEvent.STATUS, onSocketStatus );
@@ -190,14 +191,29 @@ package com.rimusdesign.flexzmq{
 //			socketMonitor.start ( );
 //		}
 
-
+		public function get connected():Boolean {
+			return socket.connected;
+		}
 		
+		public function reconnect():void {
+			if(_host && _port){
+				connect(_host, _port);
+			}
+		}
 		
+		public function get host():String {
+			return _host;
+		}
+		
+		public function get port():uint {
+			return _port;
+		}
 		
 		public function connect ( address : String, port : uint ) : void {
 			
 			if ( socket.connected ) close ( );
-			
+			_host = address;
+			_port = port;
 			addEventListeners ( );
 //			TODO implement socket monitor so it works regardless of server being live
 //			socketMonitor	= new SocketMonitor ( address, port );
